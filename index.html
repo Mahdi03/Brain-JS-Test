@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Brain JS Neural Network Learning</title>
+    <style>
+        #AIReplyPost {
+            float: left;
+        }
+        
+        #UserReplyPost {
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <p id="MLReplyPost"></p>
+    <p id="UserReplyPost"></p>
+    <input type="text" id="chatBox" />
+    <script src="https://cdn.rawgit.com/BrainJS/brain.js/45ce6ffc/browser.js"></script>
+    <!--<script>
+        //Global Vars For ML Logic
+        const neuralNetwork = new brain.NeuralNetwork({
+            hiddenLayers: [3]
+        });
+        neuralNetwork.train([{
+            input: {
+                "hello": 1
+            },
+            output: {
+                "Hello": 1
+            }
+        }, {
+            input: {
+                "bye": 1
+            },
+            output: {
+                "Bye": 1
+            }
+        }]);
+        console.log(neuralNetwork.run({
+            "hello": 1
+        }));
+        var trainingData = [];
+        //Vars for User to ML interaction
+        var originalResponse = "";
+        var firstReply = true;
+        var chatBox = document.querySelector("#chatBox");
+        //ChatBox When Enter is pressed
+        chatBox.onkeydown = (event) => {
+            if (event.key === "Enter") {
+                //Show Users Text On Main Text Box
+                UserReply(chatBox.value);
+                //Run The ML 
+                MLChooseReply();
+            }
+        };
+
+        function UserReply(text) {
+            var UserReplyPost = document.querySelector("#UserReplyPost");
+            UserReplyPost.innerHTML += "<br />" + text;
+        }
+
+        function MLReply(text) {
+            var MLReplyPost = document.querySelector("#MLReplyPost");
+            MLReplyPost.innerHTML += "<br />" + text;
+        }
+
+        function MLChooseReply() {
+            var inputText = chatBox.value;
+            if (firstReply) {
+                var result = neuralNetwork.run(JSON.parse('[{\"' + inputText + '\":1}]')[0]);
+                //Filter through the reults
+                if (trainingData.length < 100) {
+                    //Filter through the results to get the most probable outcome
+                    console.log("Continuing");
+                } else {
+                    console.log("Nothing much found");
+                    // Reply with same text to see what the user would respond with
+                    MLReply(inputText);
+                    // Change firstReply Var to opposite value so that next time it runs a
+                    // different course
+                    firstReply = !firstReply;
+                    // Set originalResponse so that it can be stored in training data on
+                    // next run
+                    originalResponse = inputText;
+                }
+                //Clear Chatbox value so user can type again
+                chatBox.value = "";
+            }
+            if (!firstReply) {
+                // This time add the response to the training data to better the ML's
+                // responses
+                trainingData.push({
+                    input: JSON.parse('[{\"' + originalResponse + '\":1}]')[0],
+                    output: JSON.parse('[{\"' + inputText + '\":1}]')[0]
+                });
+                //Train Neural Network with updated data
+                neuralNetwork.train(trainingData);
+                //Set firstReply and originalResponse to original values for next use
+                firstReply = !firstReply;
+                originalResponse = "";
+            }
+        }
+        /*
+        {
+            input: {
+                "hello": 1
+            },
+            output: {
+                "Hello": 1
+            }
+        }, {
+            input: {
+                "bye": 1
+            },
+            output: {
+                "Bye": 1
+            }
+        }
+        *
+        var trainingData = [{
+            input: {
+                "hello": 1
+            },
+            output: {
+                "Hello": 1
+            }
+        }, {
+            input: {
+                "bye": 1
+            },
+            output: {
+                "Bye": 1
+            }
+        }];
+        //neuralNetwork.train(trainingData);
+
+        //XOR
+        /*
+                input 0 0, output 0
+                input 0 1, output 1
+                input 1 0, output 1
+                input 1 1, output 0
+                *
+
+                const trainingData = [{
+                    input: [0, 0],
+                    output: [1]
+                }, {
+                    input: [0, 1],
+                    output: [0]
+                }, {
+                    input: [1, 0],
+                    output: [0]
+                }, {
+                    input: [1, 1],
+                    output: [1]
+                }, {
+                    input: [5, 0],
+                    output: [0]
+                }, {
+                    input: [5, 5],
+                    output: [1]
+                }];
+
+                neuralNetwork.train(trainingData, {
+                    log: (error) => console.log(error),
+                    logPeriod: 100
+                });
+                console.log(neuralNetwork.run([5, 6]));
+                */
+    </script>-->
+    <script>
+        const neuralNetwork = new brain.NeuralNetwork();
+        const trainingData = [];
+        var cardamomLinks = ["cardamom1.jpg", "cardamom2.jpg", "cardamom3.jpg"];
+        var refrigeratorLinks = ["refrigerator1.jpg", "refrigerator2.jpg", "refrigerator3.jpg"];
+
+        function getDataURI(url, callback) {
+            var image = new Image();
+            image.src = url;
+
+            image.onload = function() {
+                var canvas = document.createElement("canvas");
+                canvas.width = this.naturalWidth;
+                canvas.height = this.naturalHeight;
+                canvas.getContext("2d").drawImage(this, 0, 0);
+                document.body.appendChild(canvas);
+                callback(canvas.toDataURL().replace("data:image/png;base64,", ""));
+            };
+        }
+        for (var i = 0; i < cardamomLinks.length; i++) {
+            getDataURI(cardamomLinks[i], (imageURI) => {
+                /*trainingData.push({
+                    input: [imageURI],
+                    output: [1]
+                });*/
+                console.log(imageURI);
+            });
+        }
+        for (var j = 0; j < refrigeratorLinks; j++) {
+            getDataURI(refrigeratorLinks[j], (imageURI) => {
+                trainingData.push({
+                    input: [imageURI],
+                    output: [0]
+                });
+            });
+        }
+        neuralNetwork.train(trainingData);
+        //Test Cardamom Image
+        getDataURI("cardamomTest.jpg", (imageURI) => {
+            console.log("Cardamom:");
+            console.log(neuralNetwork.run([imageURI]));
+        });
+        //Test Refrigerator Image
+        getDataURI("refrigeratorTest.jpg", (imageURI) => {
+            console.log("Refrigerator:");
+            console.log(neuralNetwork.run([imageURI]));
+        })
+    </script>
+</body>
+
+</html>
