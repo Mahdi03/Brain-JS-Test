@@ -200,7 +200,7 @@
                 });
             });
         }
-        for (var j = 0; j < refrigeratorLinks; j++) {
+        for (var j = 0; j < refrigeratorLinks.length; j++) {
             getDataURI(refrigeratorLinks[j], (imageURI) => {
                 trainingData.push({
                     input: [imageURI],
