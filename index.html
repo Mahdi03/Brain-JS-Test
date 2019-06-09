@@ -194,10 +194,12 @@
         }
         for (var i = 0; i < cardamomLinks.length; i++) {
             getDataURI(cardamomLinks[i], (imageURI) => {
-                trainingData.push({
+                /*trainingData.push({
                     input: [imageURI],
                     output: [1]
-                });
+                });*/
+                console.log(imageURI);
+                console.log(parseInt(imageURI, 64));
             });
         }
         for (var j = 0; j < refrigeratorLinks.length; j++) {
