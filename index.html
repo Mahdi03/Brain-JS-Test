@@ -181,7 +181,6 @@
 
         function getDataURI(url, callback) {
             var image = new Image();
-            image.src = url;
 
             image.onload = function() {
                 var canvas = document.createElement("canvas");
@@ -191,6 +190,7 @@
                 document.body.appendChild(canvas);
                 callback(canvas.toDataURL().replace("data:image/png;base64,", ""));
             };
+            image.src = url;
         }
         for (var i = 0; i < cardamomLinks.length; i++) {
             getDataURI(cardamomLinks[i], (imageURI) => {
